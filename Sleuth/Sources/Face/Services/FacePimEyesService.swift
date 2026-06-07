@@ -1,67 +1,47 @@
 import Foundation
 
 final class FacePimEyesService {
-    private let session = faceURLSession()
-
+    // PimEyes sits behind Cloudflare — the full browser engine is required.
+    // We use WKWebView to load their site, inject JS to submit the upload form,
+    // then scrape the rendered results page for social profile links.
     func search(imageData: Data) async throws -> [FaceSearchResult] {
-        let token = try await upload(imageData: imageData)
-        let searchId = try await submit(token: token)
-        return try await poll(searchId: searchId)
+        guard let pageURL = URL(string: "https://pimeyes.com/en") else { return [] }
+        let html = (try? await submitImageFormWithBrowser(
+            pageURL: pageURL,
+            imageData: imageData,
+            waitAfterSubmit: 8.0
+        )) ?? ""
+        guard !html.isEmpty else { return [] }
+        return parsePimEyesHTML(html)
     }
 
-    private func upload(imageData: Data) async throws -> String {
-        let boundary = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-        var req = URLRequest(url: URL(string: "https://pimeyes.com/api/upload/file")!)
-        req.httpMethod = "POST"
-        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        req.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")
-        req.httpBody = faceMultipartBody(imageData: imageData, field: "file", fileName: "face.jpg", boundary: boundary)
+    private func parsePimEyesHTML(_ html: String) -> [FaceSearchResult] {
+        // PimEyes results page contains face match cards with site URLs and similarity scores.
+        // Pattern: data-url="https://..." or href="https://..." near a similarity percentage.
+        let urlPattern = try! NSRegularExpression(
+            pattern: #"(?:data-url|href)=["'](https?://[^"']+)["']"#,
+            options: .caseInsensitive
+        )
+        let ns = html as NSString
+        let range = NSRange(location: 0, length: ns.length)
+        var results: [FaceSearchResult] = []
+        var seen = Set<String>()
 
-        let (data, _) = try await session.data(for: req)
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let token = json["token"] as? String else { throw FacePimEyesError.uploadFailed }
-        return token
-    }
-
-    private func submit(token: String) async throws -> String {
-        let body = try JSONSerialization.data(withJSONObject: [
-            "faces": [["token": token]], "time": "week", "type": "PREMIUM_SEARCH"
-        ])
-        var req = URLRequest(url: URL(string: "https://pimeyes.com/api/search/new")!)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")
-        req.httpBody = body
-
-        let (data, _) = try await session.data(for: req)
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let id = json["searchId"] as? String else { throw FacePimEyesError.submitFailed }
-        return id
-    }
-
-    private func poll(searchId: String) async throws -> [FaceSearchResult] {
-        for attempt in 0..<15 {
-            if attempt > 0 { try await Task.sleep(nanoseconds: 2_000_000_000) }
-            var c = URLComponents(string: "https://pimeyes.com/api/search/status")!
-            c.queryItems = [URLQueryItem(name: "searchId", value: searchId)]
-            var req = URLRequest(url: c.url!)
-            req.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")
-
-            let (data, _) = try await session.data(for: req)
-            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
-            if json["status"] as? String == "FINISHED",
-               let items = json["results"] as? [[String: Any]] {
-                return items.compactMap { item -> FaceSearchResult? in
-                    guard let siteURL = item["siteUrl"] as? String,
-                          let url = URL(string: siteURL),
-                          FaceURLExtractor.isSocial(url),
-                          let norm = FaceURLExtractor.normalize(url) else { return nil }
-                    return FaceSearchResult(url: norm, platform: FacePlatform.from(host: url.host ?? ""),
-                                            sourceEngine: .pimEyes, confidence: item["similarity"] as? Double ?? 0.5)
-                }
-            }
+        urlPattern.matches(in: html, range: range).forEach { m in
+            guard m.numberOfRanges > 1 else { return }
+            let urlStr = ns.substring(with: m.range(at: 1))
+            guard seen.insert(urlStr).inserted,
+                  let url = URL(string: urlStr),
+                  FaceURLExtractor.isSocial(url),
+                  let norm = FaceURLExtractor.normalize(url) else { return }
+            results.append(FaceSearchResult(
+                url: norm,
+                platform: FacePlatform.from(host: url.host ?? ""),
+                sourceEngine: .pimEyes,
+                confidence: 0.8
+            ))
         }
-        return []
+        return results
     }
 }
 
