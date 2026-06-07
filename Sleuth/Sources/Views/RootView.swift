@@ -8,6 +8,9 @@ struct RootView: View {
             SearchView()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
 
+            FaceSearchView()
+                .tabItem { Label("Face", systemImage: "face.smiling") }
+
             HistoryView()
                 .tabItem { Label("History", systemImage: "clock") }
 
