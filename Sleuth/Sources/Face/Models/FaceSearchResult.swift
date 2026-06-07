@@ -91,5 +91,6 @@ enum FaceEngine: String, Codable, CaseIterable, Identifiable {
     case googleLens = "Google Lens"
     case yandex = "Yandex"
     case pimEyes = "PimEyes"
+    case search4faces = "Search4Faces"
     var id: String { rawValue }
 }

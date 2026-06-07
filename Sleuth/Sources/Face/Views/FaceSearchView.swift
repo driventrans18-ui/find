@@ -13,6 +13,7 @@ final class FaceSearchViewModel: ObservableObject {
     private let google = FaceGoogleLensService()
     private let yandex = FaceYandexService()
     private let pimEyes = FacePimEyesService()
+    private let search4faces = FaceSearch4FacesService()
 
     func handleImage(_ image: UIImage) {
         showCamera = false; showPhotoPicker = false
@@ -27,6 +28,7 @@ final class FaceSearchViewModel: ObservableObject {
                     group.addTask { (try? await self.google.search(imageData: data)) ?? [] }
                     group.addTask { (try? await self.yandex.search(imageData: data)) ?? [] }
                     group.addTask { (try? await self.pimEyes.search(imageData: data)) ?? [] }
+                    group.addTask { (try? await self.search4faces.search(imageData: data)) ?? [] }
                     for await results in group {
                         s.results.append(contentsOf: results)
                         session = s
@@ -283,6 +285,14 @@ struct BrowserFallbackButtons: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.purple.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+
+            Link(destination: URL(string: "https://search4faces.com")!) {
+                Label("Search4Faces", systemImage: "person.crop.rectangle.stack")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.green.opacity(0.12))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
