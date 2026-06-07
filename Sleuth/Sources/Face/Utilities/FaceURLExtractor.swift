@@ -47,17 +47,47 @@ struct FaceURLExtractor {
         return c.url
     }
 
-    // Exclude noise: google-internal URLs, javascript, anchors, CDN assets
+    // Exclude noise: CDN/script/asset URLs and known tracker/infrastructure domains
     private static func isUseful(_ url: URL) -> Bool {
         guard let scheme = url.scheme, scheme == "https" || scheme == "http",
               let host = url.host else { return false }
         let h = host.lowercased()
-        let blocklist = ["google.com", "gstatic.com", "googleapis.com", "googleusercontent.com",
-                         "yandex.ru", "yandex.com", "yandex.net", "pimeyes.com",
-                         "apple.com", "icloud.com", "w3.org", "schema.org"]
-        if blocklist.contains(where: { h == $0 || h.hasSuffix(".\($0)") }) { return false }
+
+        // Block known infrastructure / CDN / analytics / search engine domains
+        let blockedDomains = [
+            "google.com", "gstatic.com", "googleapis.com", "googleusercontent.com",
+            "googletagmanager.com", "google-analytics.com", "doubleclick.net",
+            "googlesyndication.com", "googleadservices.com",
+            "yandex.ru", "yandex.com", "yandex.net",
+            "pimeyes.com",
+            "apple.com", "icloud.com",
+            "w3.org", "schema.org",
+            "cloudflare.com", "cloudflareinsights.com",
+            "jquery.com", "jquery.org",
+            "unpkg.com", "jsdelivr.net",
+            "bootstrapcdn.com",
+            "search4faces.com",
+            "amazon.com", "amazonaws.com",
+            "akamai.com", "akamaized.net", "akamaihd.net",
+            "fastly.net", "fastly.com",
+            "cdnjs.cloudflare.com",
+            "twimg.com",
+            "fbcdn.net", "fbsbx.com",
+            "instagram.fbcdn.net"
+        ]
+        if blockedDomains.contains(where: { h == $0 || h.hasSuffix(".\($0)") }) { return false }
+
+        // Block deep CDN subdomains (more than 3 dots in host = likely cdn-123.something.net.example.com)
+        if h.components(separatedBy: ".").count > 4 { return false }
+
+        // Block static asset extensions
+        let path = url.path.lowercased()
+        let blockedExtensions = [".js", ".css", ".woff", ".woff2", ".ttf", ".eot",
+                                  ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico",
+                                  ".webp", ".mp4", ".mp3", ".pdf", ".zip", ".map"]
+        if blockedExtensions.contains(where: { path.hasSuffix($0) }) { return false }
+
         // Must have a path that looks like a profile (not just a root domain)
-        let path = url.path
         return path.count > 1
     }
 }
