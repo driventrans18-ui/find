@@ -3,145 +3,145 @@
     "name": "500px",
     "category": "Photo",
     "url": "https://500px.com/p/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "About.me",
     "category": "Social",
     "url": "https://about.me/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "AllMyLinks",
     "category": "Other",
     "url": "https://allmylinks.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Anchor",
     "category": "Other",
     "url": "https://anchor.fm/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "AngelList",
     "category": "Other",
     "url": "https://angel.co/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "ArtStation",
     "category": "Photo",
     "url": "https://www.artstation.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Ask.fm",
     "category": "Social",
     "url": "https://ask.fm/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "AtCoder",
     "category": "Coding",
     "url": "https://atcoder.jp/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Audiomack",
     "category": "Music",
     "url": "https://audiomack.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Badoo",
     "category": "Social",
     "url": "https://badoo.com/en/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Bandcamp",
     "category": "Music",
     "url": "https://{}.bandcamp.com/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "BeatPort",
     "category": "Music",
     "url": "https://www.beatport.com/artist/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Behance",
     "category": "Photo",
     "url": "https://www.behance.net/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "BeReal",
     "category": "Social",
     "url": "https://bere.al/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Bilibili",
     "category": "Video",
     "url": "https://space.bilibili.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Bitbucket",
     "category": "Coding",
     "url": "https://bitbucket.org/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "BitChute",
     "category": "Video",
     "url": "https://www.bitchute.com/channel/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Blogger",
     "category": "Blog",
     "url": "https://{}.blogspot.com",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Bluesky",
     "category": "Social",
     "url": "https://bsky.app/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Bongacams",
     "category": "Adult",
     "url": "https://bongacams.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "BuyMeACoffee",
     "category": "Other",
     "url": "https://www.buymeacoffee.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Caffeine",
     "category": "Video",
     "url": "https://www.caffeine.tv/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Cam4",
     "category": "Adult",
     "url": "https://www.cam4.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Carrd",
     "category": "Other",
     "url": "https://{}.carrd.co",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Chaturbate",
@@ -155,61 +155,61 @@
     "name": "Chess.com",
     "category": "Gaming",
     "url": "https://www.chess.com/member/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Clubhouse",
     "category": "Social",
     "url": "https://www.joinclubhouse.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "CodeChef",
     "category": "Coding",
     "url": "https://www.codechef.com/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Codeforces",
     "category": "Coding",
     "url": "https://codeforces.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Codepen",
     "category": "Coding",
     "url": "https://codepen.io/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Coffee Meets Bagel",
     "category": "Dating",
     "url": "https://coffeemeetsbagel.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Crunchbase",
     "category": "Other",
     "url": "https://www.crunchbase.com/person/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "DailyMotion",
     "category": "Video",
     "url": "https://www.dailymotion.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Deezer",
     "category": "Music",
     "url": "https://www.deezer.com/en/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Dev.to",
     "category": "Coding",
     "url": "https://dev.to/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "DeviantArt",
@@ -222,25 +222,25 @@
     "name": "Discogs",
     "category": "Music",
     "url": "https://www.discogs.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Disqus",
     "category": "Forum",
     "url": "https://disqus.com/by/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Docker",
     "category": "Coding",
     "url": "https://hub.docker.com/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Dribbble",
     "category": "Photo",
     "url": "https://dribbble.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Duolingo",
@@ -254,19 +254,19 @@
     "name": "Ello",
     "category": "Social",
     "url": "https://ello.co/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Etsy",
     "category": "Other",
     "url": "https://www.etsy.com/shop/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Exercism",
     "category": "Coding",
     "url": "https://exercism.org/profiles/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Facebook",
@@ -280,67 +280,67 @@
     "name": "Faceit",
     "category": "Gaming",
     "url": "https://www.faceit.com/en/players/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Fetlife",
     "category": "Adult",
     "url": "https://fetlife.com/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Fiverr",
     "category": "Other",
     "url": "https://www.fiverr.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Flickr",
     "category": "Social",
     "url": "https://www.flickr.com/people/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Flipboard",
     "category": "Other",
     "url": "https://flipboard.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Foursquare",
     "category": "Social",
     "url": "https://foursquare.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "FreeCodeCamp",
     "category": "Coding",
     "url": "https://www.freecodecamp.org/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Freelancer",
     "category": "Other",
     "url": "https://www.freelancer.com/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Gab",
     "category": "Social",
     "url": "https://gab.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "GameJolt",
     "category": "Gaming",
     "url": "https://gamejolt.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Giphy",
     "category": "Other",
     "url": "https://giphy.com/channel/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "GitHub",
@@ -354,13 +354,13 @@
     "name": "GitLab",
     "category": "Coding",
     "url": "https://gitlab.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "GoodReads",
     "category": "Other",
     "url": "https://www.goodreads.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Gravatar",
@@ -373,13 +373,13 @@
     "name": "Gyazo",
     "category": "Photo",
     "url": "https://gyazo.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "HackerEarth",
     "category": "Coding",
     "url": "https://www.hackerearth.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "HackerNews",
@@ -393,67 +393,67 @@
     "name": "Hackernoon",
     "category": "Blog",
     "url": "https://hackernoon.com/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Hashnode",
     "category": "Coding",
     "url": "https://hashnode.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Hinge",
     "category": "Dating",
     "url": "https://hinge.co/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Hive",
     "category": "Social",
     "url": "https://peakd.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "HuggingFace",
     "category": "Coding",
     "url": "https://huggingface.co/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Imgbb",
     "category": "Photo",
     "url": "https://imgbb.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Imgur",
     "category": "Photo",
     "url": "https://imgur.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "IndieHackers",
     "category": "Forum",
     "url": "https://www.indiehackers.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Instagram",
     "category": "Social",
     "url": "https://www.instagram.com/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Itch.io",
     "category": "Gaming",
     "url": "https://{}.itch.io/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Kaggle",
     "category": "Coding",
     "url": "https://www.kaggle.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Keybase",
@@ -467,13 +467,13 @@
     "name": "Kick",
     "category": "Video",
     "url": "https://kick.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Ko-fi",
     "category": "Other",
     "url": "https://ko-fi.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Kongregate",
@@ -486,25 +486,25 @@
     "name": "Last.fm",
     "category": "Music",
     "url": "https://www.last.fm/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "LeetCode",
     "category": "Coding",
     "url": "https://leetcode.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Lemmy",
     "category": "Forum",
     "url": "https://lemmy.world/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Letterboxd",
     "category": "Other",
     "url": "https://letterboxd.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Lichess",
@@ -517,13 +517,13 @@
     "name": "LinkedIn",
     "category": "Social",
     "url": "https://www.linkedin.com/in/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Linktree",
     "category": "Other",
     "url": "https://linktr.ee/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Livejournal",
@@ -544,25 +544,25 @@
     "name": "Lovoo",
     "category": "Dating",
     "url": "https://www.lovoo.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Mamba",
     "category": "Dating",
     "url": "https://www.mamba.ru/en/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "ManyVids",
     "category": "Adult",
     "url": "https://www.manyvids.com/Profile/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Mastodon",
     "category": "Social",
     "url": "https://mastodon.social/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Medium",
@@ -575,109 +575,109 @@
     "name": "MeWe",
     "category": "Social",
     "url": "https://mewe.com/i/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Minds",
     "category": "Social",
     "url": "https://www.minds.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Minecraft",
     "category": "Gaming",
     "url": "https://namemc.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Mix",
     "category": "Other",
     "url": "https://mix.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Mixcloud",
     "category": "Music",
     "url": "https://www.mixcloud.com/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Muck Rack",
     "category": "Other",
     "url": "https://muckrack.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Musixmatch",
     "category": "Music",
     "url": "https://www.musixmatch.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Myspace",
     "category": "Social",
     "url": "https://myspace.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Newgrounds",
     "category": "Gaming",
     "url": "https://{}.newgrounds.com",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Niconico",
     "category": "Video",
     "url": "https://www.nicovideo.jp/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "npm",
     "category": "Coding",
     "url": "https://www.npmjs.com/~{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Odysee",
     "category": "Video",
     "url": "https://odysee.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "OK.ru",
     "category": "Social",
     "url": "https://ok.ru/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "OkCupid",
     "category": "Dating",
     "url": "https://www.okcupid.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "OnlyFans",
     "category": "Other",
     "url": "https://onlyfans.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "OnlyFans Adult",
     "category": "Adult",
     "url": "https://onlyfans.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Pandora",
     "category": "Music",
     "url": "https://www.pandora.com/artist/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Pastebin",
     "category": "Coding",
     "url": "https://pastebin.com/u/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Patreon",
@@ -690,49 +690,49 @@
     "name": "Periscope",
     "category": "Video",
     "url": "https://www.pscp.tv/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Pinterest",
     "category": "Social",
     "url": "https://www.pinterest.com/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Pixiv",
     "category": "Photo",
     "url": "https://www.pixiv.net/en/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Plurk",
     "category": "Social",
     "url": "https://www.plurk.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "ProductHunt",
     "category": "Forum",
     "url": "https://www.producthunt.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "PSN",
     "category": "Gaming",
     "url": "https://psnprofiles.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "PyPI",
     "category": "Coding",
     "url": "https://pypi.org/user/{}/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Quora",
     "category": "Blog",
     "url": "https://www.quora.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Reddit",
@@ -746,25 +746,25 @@
     "name": "Replit",
     "category": "Coding",
     "url": "https://replit.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "ResearchGate",
     "category": "Other",
     "url": "https://www.researchgate.net/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Resident Advisor",
     "category": "Music",
     "url": "https://www.residentadvisor.net/dj/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "ReverbNation",
     "category": "Music",
     "url": "https://www.reverbnation.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Roblox",
@@ -778,31 +778,31 @@
     "name": "Rumble",
     "category": "Social",
     "url": "https://rumble.com/c/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Scratch",
     "category": "Coding",
     "url": "https://scratch.mit.edu/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Smashwords",
     "category": "Blog",
     "url": "https://www.smashwords.com/profile/view/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "SmugMug",
     "category": "Photo",
     "url": "https://{}.smugmug.com",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Smule",
     "category": "Music",
     "url": "https://www.smule.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Snapchat",
@@ -815,37 +815,37 @@
     "name": "SoundCloud",
     "category": "Music",
     "url": "https://soundcloud.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "SoundOn",
     "category": "Other",
     "url": "https://soundon.fm/podcasters/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Sourceforge",
     "category": "Coding",
     "url": "https://sourceforge.net/u/{}/profile",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Speedrun.com",
     "category": "Gaming",
     "url": "https://www.speedrun.com/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Spotify",
     "category": "Music",
     "url": "https://open.spotify.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "StackOverflow",
     "category": "Coding",
     "url": "https://stackoverflow.com/users/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Steam",
@@ -858,25 +858,25 @@
     "name": "SteemIt",
     "category": "Social",
     "url": "https://steemit.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Strava",
     "category": "Other",
     "url": "https://www.strava.com/athletes/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Stripchat",
     "category": "Adult",
     "url": "https://stripchat.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Substack",
     "category": "Blog",
     "url": "https://{}.substack.com",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Telegram",
@@ -889,49 +889,49 @@
     "name": "Threads",
     "category": "Social",
     "url": "https://www.threads.net/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Tidal",
     "category": "Music",
     "url": "https://tidal.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "TikTok",
     "category": "Social",
     "url": "https://www.tiktok.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Tinder",
     "category": "Dating",
     "url": "https://www.tinder.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "TopCoder",
     "category": "Coding",
     "url": "https://www.topcoder.com/members/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Trello",
     "category": "Other",
     "url": "https://trello.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Tripadvisor",
     "category": "Other",
     "url": "https://www.tripadvisor.com/members/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Trovo",
     "category": "Video",
     "url": "https://trovo.live/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Tumblr",
@@ -944,68 +944,68 @@
     "name": "Twitch",
     "category": "Video",
     "url": "https://www.twitch.tv/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Twitter",
     "category": "Social",
     "url": "https://twitter.com/{}",
-    "detection": "statusCode",
+    "detection": "status_code",
     "regex_check": "^[A-Za-z0-9_]{1,15}$"
   },
   {
     "name": "Unsplash",
     "category": "Photo",
     "url": "https://unsplash.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Untappd",
     "category": "Other",
     "url": "https://untappd.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Upwork",
     "category": "Other",
     "url": "https://www.upwork.com/freelancers/~{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Vero",
     "category": "Social",
     "url": "https://vero.co/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Vimeo",
     "category": "Video",
     "url": "https://vimeo.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "VK",
     "category": "Social",
     "url": "https://vk.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Vsco",
     "category": "Photo",
     "url": "https://vsco.co/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Wattpad",
     "category": "Blog",
     "url": "https://www.wattpad.com/user/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Weibo",
     "category": "Social",
     "url": "https://weibo.com/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Wikipedia",
@@ -1019,49 +1019,49 @@
     "name": "WordPress",
     "category": "Blog",
     "url": "https://{}.wordpress.com/",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Write.as",
     "category": "Blog",
     "url": "https://write.as/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "X (Twitter)",
     "category": "Social",
     "url": "https://x.com/{}",
-    "detection": "statusCode",
+    "detection": "status_code",
     "regex_check": "^[A-Za-z0-9_]{1,15}$"
   },
   {
     "name": "Xing",
     "category": "Social",
     "url": "https://www.xing.com/profile/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Yelp",
     "category": "Other",
     "url": "https://www.yelp.com/user_details?userid={}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "YouTube",
     "category": "Video",
     "url": "https://www.youtube.com/@{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Zhihu",
     "category": "Social",
     "url": "https://www.zhihu.com/people/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   },
   {
     "name": "Zoosk",
     "category": "Dating",
     "url": "https://www.zoosk.com/date/{}",
-    "detection": "statusCode"
+    "detection": "status_code"
   }
 ]
