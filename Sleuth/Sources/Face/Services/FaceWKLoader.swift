@@ -87,21 +87,23 @@ private final class _WKHTMLFetcher: NSObject, WKNavigationDelegate {
     private var navigationCount = 0
     private var waitForSecondNavigation = false
     private var timer: Timer?
+    // Strong self-reference keeps this object alive until finish() is called,
+    // since WKWebView.navigationDelegate is weak and would otherwise drop us.
+    private var selfRetain: _WKHTMLFetcher?
 
     init(wait: TimeInterval) {
         waitAfterLoad = wait
         let cfg = WKWebViewConfiguration()
         cfg.defaultWebpagePreferences.allowsContentJavaScript = true
-        // Place off-screen so WKWebView actually loads content
         webView = WKWebView(frame: CGRect(x: -2, y: -2, width: 1, height: 1), configuration: cfg)
         super.init()
         webView.navigationDelegate = self
     }
 
     func start(req: URLRequest, waitForSecondNavigation: Bool = false, completion: @escaping (Result<String, Error>) -> Void) {
+        selfRetain = self   // prevent deallocation until finish()
         self.completion = completion
         self.waitForSecondNavigation = waitForSecondNavigation
-        // Timeout
         timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { [weak self] _ in
             self?.finish(with: .failure(URLError(.timedOut)))
         }
@@ -150,6 +152,7 @@ private final class _WKHTMLFetcher: NSObject, WKNavigationDelegate {
         completion = nil
         timer?.invalidate()
         timer = nil
+        selfRetain = nil    // release the self-retain cycle
         comp(result)
     }
 }
