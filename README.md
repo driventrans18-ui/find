@@ -44,7 +44,8 @@ xcodegen generate
 open Sleuth.xcodeproj
 ```
 
-Then pick a simulator and hit **Run**. (You can also create a new iOS App in
+Then pick a simulator and hit **Run**. Requires iOS 17+ (the UI uses
+`ContentUnavailableView`). (You can also create a new iOS App in
 Xcode manually and drag the `Sources/` and `Resources/` folders in.)
 
 > Set your signing **Team** in the target's *Signing & Capabilities* tab before
