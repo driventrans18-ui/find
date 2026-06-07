@@ -13,7 +13,7 @@ final class FaceSearch4FacesService {
         // Try WKWebView browser submission first (bypasses bot detection)
         for endpoint in endpoints {
             guard let pageURL = URL(string: endpoint) else { continue }
-            if let html = try? await submitImageFormWithBrowser(pageURL: pageURL, imageData: imageData, waitAfterSubmit: 7.0),
+            if let html = try? await submitImageFormWithBrowser(pageURL: pageURL, imageData: imageData, waitAfterSubmit: 5.0),
                !html.isEmpty {
                 let results = parseResults(from: html)
                 if !results.isEmpty { return results }
