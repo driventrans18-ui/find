@@ -106,6 +106,20 @@ struct FaceURLExtractor {
                                   ".webp", ".mp4", ".mp3", ".pdf", ".zip", ".map"]
         if blockedExtensions.contains(where: { path.hasSuffix($0) }) { return false }
 
+        // Block non-profile path patterns (policy, support, legal, generic site pages)
+        let blockedPathSegments = [
+            "privacy", "privacy-policy", "privacy_policy",
+            "terms", "terms-of-service", "terms-of-use", "tos",
+            "legal", "legal-notice", "imprint", "impressum",
+            "cookie", "cookies", "gdpr",
+            "support", "help", "faq", "contact", "about", "about-us",
+            "login", "signin", "signup", "register", "auth",
+            "careers", "jobs", "press", "news", "blog",
+            "sitemap", "robots.txt"
+        ]
+        let pathSegments = path.split(separator: "/").map(String.init)
+        if pathSegments.contains(where: { seg in blockedPathSegments.contains(where: { seg.hasPrefix($0) }) }) { return false }
+
         // Must have a meaningful path (more than just "/" or "/a")
         return path.count > 2
     }
