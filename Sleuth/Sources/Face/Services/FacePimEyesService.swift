@@ -9,7 +9,7 @@ final class FacePimEyesService {
         let html = (try? await submitImageFormWithBrowser(
             pageURL: pageURL,
             imageData: imageData,
-            waitAfterSubmit: 8.0
+            waitAfterSubmit: 5.0
         )) ?? ""
         guard !html.isEmpty else { return [] }
         return parsePimEyesHTML(html)

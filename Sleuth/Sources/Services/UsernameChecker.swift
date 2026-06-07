@@ -11,7 +11,8 @@ actor UsernameChecker {
 
     init() {
         let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 15
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 12
         config.httpAdditionalHeaders = [
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
                 + "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
@@ -20,19 +21,26 @@ actor UsernameChecker {
         session = URLSession(configuration: config)
     }
 
-    /// Probe every site concurrently and stream each result as it lands.
+    /// Probe sites concurrently in batches to avoid overwhelming the network stack.
     /// The `onResult` closure is invoked on the main actor.
     func search(
         username: String,
         sites: [SiteTarget],
         onResult: @MainActor @escaping (SearchResult) -> Void
     ) async {
-        await withTaskGroup(of: SearchResult.self) { group in
-            for site in sites where site.isPlausible(username: username) {
-                group.addTask { await self.check(username: username, site: site) }
-            }
-            for await result in group {
-                await onResult(result)
+        let plausible = sites.filter { $0.isPlausible(username: username) }
+        let batchSize = 40
+        var idx = 0
+        while idx < plausible.count {
+            let batch = Array(plausible[idx..<min(idx + batchSize, plausible.count)])
+            idx += batchSize
+            await withTaskGroup(of: SearchResult.self) { group in
+                for site in batch {
+                    group.addTask { await self.check(username: username, site: site) }
+                }
+                for await result in group {
+                    await onResult(result)
+                }
             }
         }
     }

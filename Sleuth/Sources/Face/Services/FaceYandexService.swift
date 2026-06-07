@@ -20,7 +20,7 @@ final class FaceYandexService {
               let resultsURL = URL(string: urlStr) else { return [] }
 
         // WKWebView bypasses Yandex bot detection
-        let html = (try? await fetchHTMLWithBrowser(url: resultsURL, waitAfterLoad: 3.5)) ?? ""
+        let html = (try? await fetchHTMLWithBrowser(url: resultsURL, waitAfterLoad: 2.0)) ?? ""
         guard !html.isEmpty else { return [] }
 
         return FaceURLExtractor.extractAllURLs(from: html).map { url in

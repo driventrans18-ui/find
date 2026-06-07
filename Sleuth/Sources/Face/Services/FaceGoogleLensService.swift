@@ -33,7 +33,7 @@ final class FaceGoogleLensService {
 
         // Use WKWebView (full Safari engine) to load the results page —
         // bypasses Cloudflare and JS challenges that block URLSession.
-        let html = (try? await fetchHTMLWithBrowser(url: resultsURL, waitAfterLoad: 4.0)) ?? ""
+        let html = (try? await fetchHTMLWithBrowser(url: resultsURL, waitAfterLoad: 2.5)) ?? ""
         guard !html.isEmpty else { return [] }
 
         return FaceURLExtractor.extractAllURLs(from: html).map { url in

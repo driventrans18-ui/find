@@ -10,10 +10,25 @@ actor SherlockCatalog {
     static let shared = SherlockCatalog()
 
     /// Non-isolated cache readable from synchronous callers (SiteCatalog.all).
-    /// Updated atomically whenever the actor updates its own `sites`.
-    nonisolated(unsafe) private(set) static var unsafeSites: [SiteTarget] = []
+    /// Pre-populated at static init time so sites are available before .task runs.
+    nonisolated(unsafe) private(set) static var unsafeSites: [SiteTarget] = SherlockCatalog.eagerLoad()
     /// Whether the current data came from a successful Sherlock fetch.
     nonisolated(unsafe) private(set) static var unsafeLoadedFromSherlock: Bool = false
+
+    // Runs synchronously at launch (before any UI frame) to populate unsafeSites
+    // from the on-disk cache or bundled fallback.
+    private static func eagerLoad() -> [SiteTarget] {
+        if let data = try? Data(contentsOf: cacheURL),
+           let decoded = try? JSONDecoder().decode([SiteTarget].self, from: data),
+           !decoded.isEmpty {
+            unsafeLoadedFromSherlock = true
+            return decoded
+        }
+        guard let url = Bundle.main.url(forResource: "sites", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([SiteTarget].self, from: data) else { return [] }
+        return decoded.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
 
     private(set) var sites: [SiteTarget] = [] {
         didSet {
