@@ -1,0 +1,186 @@
+[
+  {
+    "name": "GitHub",
+    "category": "Coding",
+    "url": "https://github.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "GitLab",
+    "category": "Coding",
+    "url": "https://gitlab.com/{}",
+    "probe_url": "https://gitlab.com/api/v4/users?username={}",
+    "detection": "message",
+    "error_message": "[]"
+  },
+  {
+    "name": "Instagram",
+    "category": "Social",
+    "url": "https://www.instagram.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "TikTok",
+    "category": "Social",
+    "url": "https://www.tiktok.com/@{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "X (Twitter)",
+    "category": "Social",
+    "url": "https://x.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Reddit",
+    "category": "Social",
+    "url": "https://www.reddit.com/user/{}",
+    "probe_url": "https://www.reddit.com/user/{}/about.json",
+    "detection": "status_code"
+  },
+  {
+    "name": "Pinterest",
+    "category": "Social",
+    "url": "https://www.pinterest.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "YouTube",
+    "category": "Video",
+    "url": "https://www.youtube.com/@{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Twitch",
+    "category": "Video",
+    "url": "https://www.twitch.tv/{}",
+    "probe_url": "https://m.twitch.tv/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Vimeo",
+    "category": "Video",
+    "url": "https://vimeo.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Medium",
+    "category": "Blogging",
+    "url": "https://medium.com/@{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Dev.to",
+    "category": "Coding",
+    "url": "https://dev.to/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Replit",
+    "category": "Coding",
+    "url": "https://replit.com/@{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Dribbble",
+    "category": "Design",
+    "url": "https://dribbble.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Behance",
+    "category": "Design",
+    "url": "https://www.behance.net/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "SoundCloud",
+    "category": "Music",
+    "url": "https://soundcloud.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Spotify",
+    "category": "Music",
+    "url": "https://open.spotify.com/user/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Steam",
+    "category": "Gaming",
+    "url": "https://steamcommunity.com/id/{}",
+    "detection": "message",
+    "error_message": "The specified profile could not be found"
+  },
+  {
+    "name": "Chess.com",
+    "category": "Gaming",
+    "url": "https://www.chess.com/member/{}",
+    "probe_url": "https://api.chess.com/pub/player/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Patreon",
+    "category": "Social",
+    "url": "https://www.patreon.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Linktree",
+    "category": "Social",
+    "url": "https://linktr.ee/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Keybase",
+    "category": "Coding",
+    "url": "https://keybase.io/{}",
+    "probe_url": "https://keybase.io/_/api/1.0/user/lookup.json?username={}",
+    "detection": "message",
+    "error_message": "\"them\":null"
+  },
+  {
+    "name": "HackerNews",
+    "category": "Coding",
+    "url": "https://news.ycombinator.com/user?id={}",
+    "probe_url": "https://hacker-news.firebaseio.com/v0/user/{}.json",
+    "detection": "message",
+    "error_message": "null"
+  },
+  {
+    "name": "Bandcamp",
+    "category": "Music",
+    "url": "https://bandcamp.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "About.me",
+    "category": "Social",
+    "url": "https://about.me/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Gravatar",
+    "category": "Social",
+    "url": "https://gravatar.com/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Flickr",
+    "category": "Photo",
+    "url": "https://www.flickr.com/people/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Last.fm",
+    "category": "Music",
+    "url": "https://www.last.fm/user/{}",
+    "detection": "status_code"
+  },
+  {
+    "name": "Wattpad",
+    "category": "Blogging",
+    "url": "https://www.wattpad.com/user/{}",
+    "detection": "status_code"
+  }
+]
