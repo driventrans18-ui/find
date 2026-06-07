@@ -4,37 +4,38 @@ import SwiftUI
 
 @MainActor
 final class FaceSearchViewModel: ObservableObject {
-    @Published var session: FaceSession?
+    @Published var faceImage: UIImage?
+    @Published var faceData: Data?
     @Published var isProcessing = false
     @Published var errorMessage: String?
     @Published var showSourcePicker = false
     @Published var showCamera = false
     @Published var showPhotoPicker = false
-    @Published var engineFilter: FaceEngine? = nil
     @Published var detectedFaces: [DetectedFace] = []
     @Published var showFaceSelector = false
-    @Published var selectedFace: DetectedFace? = nil
     @Published var originalImage: UIImage? = nil
-    @Published var completedEngines: Set<FaceEngine> = []
+    // Which engine browser is open
+    @Published var activeEngineURL: URL? = nil
+    // Upload state per engine
+    @Published var engineURLs: [FaceEngine: URL] = [:]
+    @Published var engineErrors: [FaceEngine: String] = [:]
+    @Published var uploadingEngines: Set<FaceEngine> = []
 
-    private let google = FaceGoogleLensService()
-    private let yandex = FaceYandexService()
-    private let pimEyes = FacePimEyesService()
-    private let search4faces = FaceSearch4FacesService()
+    let yandex = FaceYandexService()
+    let google = FaceGoogleLensService()
 
     func handleImage(_ image: UIImage) {
         showCamera = false; showPhotoPicker = false
         isProcessing = true; errorMessage = nil
         Task {
             do {
-                // Normalize orientation first so Vision boxes align with what's displayed
                 let normalized = FaceImageProcessor.normalizeOrientation(image)
                 let faces = try await FaceImageProcessor.detectAllFaces(from: normalized)
                 if faces.isEmpty {
                     errorMessage = "No face detected in the selected photo."
                     isProcessing = false
                 } else if faces.count == 1 {
-                    await searchWithFace(faces[0])
+                    await selectFace(faces[0], normalized: normalized)
                 } else {
                     originalImage = normalized; detectedFaces = faces
                     showFaceSelector = true; isProcessing = false
@@ -45,34 +46,36 @@ final class FaceSearchViewModel: ObservableObject {
         }
     }
 
-    func searchWithFace(_ face: DetectedFace) async {
-        isProcessing = true; selectedFace = face
-        showFaceSelector = false; completedEngines = []
+    func selectFace(_ face: DetectedFace, normalized: UIImage? = nil) async {
+        showFaceSelector = false
+        isProcessing = true
         do {
             let data = try FaceImageProcessor.compressToMaxSize(face.croppedImage)
-            var s = FaceSession(faceImageData: data)
-            session = s
-            await withTaskGroup(of: (FaceEngine, [FaceSearchResult]).self) { group in
-                group.addTask { (.googleLens,   (try? await self.google.search(imageData: data)) ?? []) }
-                group.addTask { (.yandex,       (try? await self.yandex.search(imageData: data)) ?? []) }
-                group.addTask { (.pimEyes,      (try? await self.pimEyes.search(imageData: data)) ?? []) }
-                group.addTask { (.search4faces, (try? await self.search4faces.search(imageData: data)) ?? []) }
-                for await (engine, results) in group {
-                    s.results.append(contentsOf: results)
-                    session = s
-                    completedEngines.insert(engine)
-                }
-            }
-            s.status = .completed; session = s
-        } catch { errorMessage = error.localizedDescription }
-        isProcessing = false
+            faceData = data
+            faceImage = face.croppedImage
+            engineURLs = [:]
+            engineErrors = [:]
+            uploadingEngines = [.yandex, .googleLens]
+            isProcessing = false
+            // Upload to Yandex and Google Lens in background; PimEyes/Search4Faces open directly
+            async let yURL: URL? = yandex.uploadAndGetResultURL(imageData: data)
+            async let gURL: URL? = google.uploadAndGetResultURL(imageData: data)
+            let (y, g) = await (yURL, gURL)
+            uploadingEngines = []
+            if let u = y { engineURLs[.yandex] = u }
+            else { engineErrors[.yandex] = "Upload failed" }
+            if let u = g { engineURLs[.googleLens] = u }
+            else { engineErrors[.googleLens] = "Upload failed" }
+        } catch {
+            errorMessage = error.localizedDescription
+            isProcessing = false
+        }
     }
 
-    var displayedResults: [FaceSearchResult] {
-        guard let s = session else { return [] }
-        let deduped = s.deduplicatedResults
-        guard let filter = engineFilter else { return deduped }
-        return deduped.filter { $0.sourceEngine == filter }
+    func reset() {
+        faceImage = nil; faceData = nil
+        engineURLs = [:]; engineErrors = [:]
+        uploadingEngines = []
     }
 }
 
@@ -85,7 +88,13 @@ struct FaceSearchView: View {
         NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
-                content
+                if vm.isProcessing {
+                    processingView
+                } else if vm.faceImage != nil {
+                    engineListView
+                } else {
+                    emptyState
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
@@ -104,11 +113,16 @@ struct FaceSearchView: View {
             }
             .sheet(isPresented: $vm.showFaceSelector) {
                 if let orig = vm.originalImage {
-                    FaceMultiSelectView(originalImage: orig, faces: vm.detectedFaces,
-                        onSelect: { face in Task { await vm.searchWithFace(face) } },
-                        onCancel: { vm.showFaceSelector = false; vm.isProcessing = false })
-                    .interactiveDismissDisabled()
+                    FaceMultiSelectView(
+                        originalImage: orig,
+                        faces: vm.detectedFaces,
+                        onSelect: { face in Task { await vm.selectFace(face, normalized: orig) } },
+                        onCancel: { vm.showFaceSelector = false; vm.isProcessing = false }
+                    ).interactiveDismissDisabled()
                 }
+            }
+            .sheet(item: $vm.activeEngineURL) { url in
+                InAppBrowser(url: url)
             }
             .alert("Error", isPresented: Binding(get: { vm.errorMessage != nil }, set: { if !$0 { vm.errorMessage = nil } })) {
                 Button("OK") { vm.errorMessage = nil }
@@ -122,12 +136,11 @@ struct FaceSearchView: View {
         ToolbarItem(placement: .navigationBarLeading) {
             Text("sherlock")
                 .font(.system(size: 20, weight: .black, design: .rounded))
-                .foregroundStyle(.white)
-                .tracking(-0.5)
+                .foregroundStyle(.white).tracking(-0.5)
         }
         ToolbarItem(placement: .navigationBarTrailing) {
             Button { vm.showSourcePicker = true } label: {
-                if vm.isProcessing && vm.session == nil {
+                if vm.isProcessing {
                     ProgressView().tint(.white)
                 } else {
                     Image(systemName: "camera.viewfinder")
@@ -138,22 +151,160 @@ struct FaceSearchView: View {
         }
     }
 
-    @ViewBuilder
-    private var content: some View {
-        if vm.isProcessing, let face = vm.selectedFace {
-            FaceScanAnimationView(
-                faceImage: face.croppedImage,
-                completedEngines: vm.completedEngines,
-                totalEngines: FaceEngine.allCases.count
-            )
-        } else if let session = vm.session {
-            resultsView(session: session)
-        } else {
-            emptyState
+    // MARK: - Processing
+
+    private var processingView: some View {
+        VStack(spacing: 16) {
+            ProgressView().tint(.white).scaleEffect(1.5)
+            Text("Detecting face…")
+                .font(.system(.subheadline, design: .monospaced))
+                .foregroundStyle(.gray)
         }
     }
 
-    // MARK: - Empty state (Sherlock-style)
+    // MARK: - Engine list (after face selected)
+
+    private var engineListView: some View {
+        VStack(spacing: 0) {
+            // Face preview header
+            if let img = vm.faceImage {
+                HStack(spacing: 14) {
+                    Image(uiImage: img)
+                        .resizable().scaledToFill()
+                        .frame(width: 64, height: 64).clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1.5))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Face ready")
+                            .font(.headline).foregroundStyle(.white)
+                        Text("Tap an engine to search")
+                            .font(.caption).foregroundStyle(.gray)
+                    }
+                    Spacer()
+                    Button { vm.reset() } label: {
+                        Text("Clear")
+                            .font(.caption).fontWeight(.semibold)
+                            .padding(.horizontal, 12).padding(.vertical, 6)
+                            .background(Color.white.opacity(0.1)).clipShape(Capsule())
+                            .foregroundStyle(.white)
+                    }
+                }
+                .padding(16)
+                .background(Color(white: 0.07))
+            }
+
+            ScrollView {
+                VStack(spacing: 12) {
+                    engineRow(engine: .googleLens,
+                              name: "Google Lens",
+                              subtitle: "Finds visually similar faces across the web",
+                              icon: "globe",
+                              color: .blue)
+
+                    engineRow(engine: .yandex,
+                              name: "Yandex Images",
+                              subtitle: "Reverse image search — great for Eastern Europe",
+                              icon: "magnifyingglass.circle.fill",
+                              color: .orange)
+
+                    directEngineRow(name: "PimEyes",
+                                    subtitle: "Face recognition search — upload manually",
+                                    icon: "eye.fill",
+                                    color: .purple,
+                                    url: URL(string: "https://pimeyes.com/en")!)
+
+                    directEngineRow(name: "Search4Faces",
+                                    subtitle: "Find VK & OK.ru profiles by face",
+                                    icon: "person.2.fill",
+                                    color: .green,
+                                    url: URL(string: "https://search4faces.com/en/")!)
+                }
+                .padding(16)
+            }
+        }
+    }
+
+    // Engine that auto-uploads and opens results
+    private func engineRow(engine: FaceEngine, name: String, subtitle: String, icon: String, color: Color) -> some View {
+        let isUploading = vm.uploadingEngines.contains(engine)
+        let resultURL = vm.engineURLs[engine]
+        let hasError = vm.engineErrors[engine] != nil
+
+        return Button {
+            if let url = resultURL {
+                vm.activeEngineURL = url
+            } else if !isUploading {
+                // Retry upload
+                guard let data = vm.faceData else { return }
+                Task {
+                    vm.uploadingEngines.insert(engine)
+                    if engine == .yandex {
+                        if let u = await vm.yandex.uploadAndGetResultURL(imageData: data) { vm.engineURLs[.yandex] = u }
+                        else { vm.engineErrors[.yandex] = "Upload failed" }
+                    } else {
+                        if let u = await vm.google.uploadAndGetResultURL(imageData: data) { vm.engineURLs[.googleLens] = u }
+                        else { vm.engineErrors[.googleLens] = "Upload failed" }
+                    }
+                    vm.uploadingEngines.remove(engine)
+                }
+            }
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle().fill(color.opacity(0.2)).frame(width: 48, height: 48)
+                    Image(systemName: icon).font(.system(size: 20)).foregroundStyle(color)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(name).font(.headline).foregroundStyle(.white)
+                    Text(subtitle).font(.caption).foregroundStyle(.gray).lineLimit(2)
+                }
+                Spacer()
+                if isUploading {
+                    ProgressView().tint(.gray)
+                } else if resultURL != nil {
+                    Image(systemName: "arrow.up.right.circle.fill")
+                        .foregroundStyle(color).font(.title3)
+                } else if hasError {
+                    Image(systemName: "arrow.clockwise.circle")
+                        .foregroundStyle(.orange).font(.title3)
+                } else {
+                    Image(systemName: "arrow.clockwise.circle")
+                        .foregroundStyle(.gray).font(.title3)
+                }
+            }
+            .padding(14)
+            .background(Color(white: 0.09))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(
+                resultURL != nil ? color.opacity(0.4) : Color.white.opacity(0.07), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // Engine that opens directly (user uploads manually in the browser)
+    private func directEngineRow(name: String, subtitle: String, icon: String, color: Color, url: URL) -> some View {
+        Button { vm.activeEngineURL = url } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle().fill(color.opacity(0.2)).frame(width: 48, height: 48)
+                    Image(systemName: icon).font(.system(size: 20)).foregroundStyle(color)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(name).font(.headline).foregroundStyle(.white)
+                    Text(subtitle).font(.caption).foregroundStyle(.gray).lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "arrow.up.right.circle")
+                    .foregroundStyle(color).font(.title3)
+            }
+            .padding(14)
+            .background(Color(white: 0.09))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.07), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Empty state
 
     private var emptyState: some View {
         VStack(spacing: 0) {
@@ -168,32 +319,25 @@ struct FaceSearchView: View {
                 VStack(spacing: 8) {
                     Text("find anyone's\nsocial media")
                         .font(.system(size: 28, weight: .black))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(2)
+                        .foregroundStyle(.white).multilineTextAlignment(.center).lineSpacing(2)
                     Text("from just a face photo")
-                        .font(.system(.subheadline))
-                        .foregroundStyle(.gray)
+                        .font(.system(.subheadline)).foregroundStyle(.gray)
                 }
             }
             Spacer()
             VStack(spacing: 12) {
-                featurePill(icon: "globe", text: "4 search engines")
-                featurePill(icon: "person.2.fill", text: "Social profile matching")
-                featurePill(icon: "eye.fill", text: "Biometric analysis")
+                featurePill(icon: "globe", text: "Google Lens + Yandex auto-upload")
+                featurePill(icon: "eye.fill", text: "PimEyes face recognition")
+                featurePill(icon: "person.2.fill", text: "Search4Faces VK/OK.ru lookup")
             }
-            .padding(.horizontal, 40)
-            .padding(.bottom, 32)
+            .padding(.horizontal, 40).padding(.bottom, 32)
             Button { vm.showSourcePicker = true } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "camera.fill")
-                    Text("SCAN FACE")
-                        .font(.system(.headline, design: .monospaced)).fontWeight(.bold)
+                    Text("SCAN FACE").font(.system(.headline, design: .monospaced)).fontWeight(.bold)
                 }
-                .foregroundStyle(.black)
-                .frame(maxWidth: .infinity).padding(.vertical, 18)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .foregroundStyle(.black).frame(maxWidth: .infinity).padding(.vertical, 18)
+                .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal, 24).padding(.bottom, 40)
         }
@@ -205,141 +349,6 @@ struct FaceSearchView: View {
             Text(text).font(.subheadline).foregroundStyle(.gray)
             Spacer()
         }
-    }
-
-    // MARK: - Results view (Sherlock-style)
-
-    private func resultsView(session: FaceSession) -> some View {
-        VStack(spacing: 0) {
-            resultHeader(session: session)
-            filterBar
-            if vm.displayedResults.isEmpty {
-                Spacer()
-                if session.status == .completed {
-                    noBrowserFallback
-                } else {
-                    ProgressView().tint(.white)
-                }
-                Spacer()
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 10) {
-                        ForEach(vm.displayedResults) { result in
-                            FaceResultCard(result: result)
-                        }
-                    }
-                    .padding(.horizontal, 16).padding(.vertical, 12)
-                }
-            }
-        }
-    }
-
-    private func resultHeader(session: FaceSession) -> some View {
-        HStack(spacing: 14) {
-            if let img = UIImage(data: session.faceImageData) {
-                ZStack {
-                    Image(uiImage: img)
-                        .resizable().scaledToFill()
-                        .frame(width: 52, height: 52).clipShape(Circle())
-                    Circle().stroke(Color.white.opacity(0.3), lineWidth: 1.5).frame(width: 52, height: 52)
-                }
-            }
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text("\(vm.displayedResults.count)")
-                        .font(.system(size: 22, weight: .black)).foregroundStyle(.white)
-                    Text("match\(vm.displayedResults.count == 1 ? "" : "es")")
-                        .font(.headline).foregroundStyle(.gray)
-                }
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(session.status == .searching ? Color.yellow : Color.green)
-                        .frame(width: 6, height: 6)
-                    Text(session.status == .searching ? "Scanning platforms…" : "PLATFORM SEARCH COMPLETE")
-                        .font(.system(.caption2, design: .monospaced))
-                        .foregroundStyle(session.status == .searching ? .yellow : .green)
-                }
-            }
-            Spacer()
-            Button { vm.showSourcePicker = true } label: {
-                Text("New").font(.caption).fontWeight(.semibold)
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color.white.opacity(0.1)).clipShape(Capsule())
-                    .foregroundStyle(.white)
-            }
-        }
-        .padding(.horizontal, 16).padding(.vertical, 14)
-        .background(Color(white: 0.07))
-    }
-
-    private var filterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                filterChip(title: "All", isSelected: vm.engineFilter == nil) { vm.engineFilter = nil }
-                ForEach(FaceEngine.allCases) { engine in
-                    filterChip(title: engine.rawValue, isSelected: vm.engineFilter == engine) {
-                        vm.engineFilter = (vm.engineFilter == engine) ? nil : engine
-                    }
-                }
-            }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-        }
-        .background(Color(white: 0.05))
-    }
-
-    private func filterChip(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(.caption, design: .monospaced)).fontWeight(.semibold)
-                .padding(.horizontal, 14).padding(.vertical, 7)
-                .background(isSelected ? Color.white : Color.white.opacity(0.08))
-                .foregroundStyle(isSelected ? .black : .gray)
-                .clipShape(Capsule())
-        }
-    }
-
-    private var noBrowserFallback: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 8) {
-                Image(systemName: "exclamationmark.shield").font(.largeTitle).foregroundStyle(.gray)
-                Text("No results scraped").font(.headline).foregroundStyle(.white)
-                Text("Search engines blocked automated access.\nSearch manually using the buttons below.")
-                    .font(.caption).foregroundStyle(.gray).multilineTextAlignment(.center)
-            }
-            VStack(spacing: 10) {
-                browserLink("Google Lens", url: "https://lens.google.com", color: .blue)
-                browserLink("Yandex Images", url: "https://yandex.com/images", color: .orange)
-                browserLink("PimEyes", url: "https://pimeyes.com", color: .purple)
-                browserLink("Search4Faces", url: "https://search4faces.com", color: .green)
-            }
-            .padding(.horizontal, 32)
-        }
-    }
-
-    private func browserLink(_ title: String, url: String, color: Color) -> some View {
-        BrowserLinkButton(title: title, url: URL(string: url)!, color: color)
-    }
-}
-
-private struct BrowserLinkButton: View {
-    let title: String
-    let url: URL
-    let color: Color
-    @State private var browserURL: URL? = nil
-
-    var body: some View {
-        Button { browserURL = url } label: {
-            HStack {
-                Circle().fill(color.opacity(0.2)).frame(width: 8, height: 8)
-                Text(title).font(.subheadline).foregroundStyle(.white)
-                Spacer()
-                Image(systemName: "arrow.up.right.circle").foregroundStyle(color)
-            }
-            .padding(.horizontal, 16).padding(.vertical, 12)
-            .background(color.opacity(0.08))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
-        .sheet(item: $browserURL) { u in InAppBrowser(url: u) }
     }
 }
 
