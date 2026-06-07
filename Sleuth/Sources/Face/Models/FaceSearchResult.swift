@@ -7,14 +7,24 @@ struct FaceSearchResult: Identifiable, Codable, Hashable {
     let sourceEngine: FaceEngine
     let confidence: Double
     let discoveredAt: Date
+    let thumbnailURL: URL?
 
-    init(id: UUID = UUID(), url: URL, platform: FacePlatform, sourceEngine: FaceEngine, confidence: Double, discoveredAt: Date = Date()) {
+    init(
+        id: UUID = UUID(),
+        url: URL,
+        platform: FacePlatform,
+        sourceEngine: FaceEngine,
+        confidence: Double,
+        discoveredAt: Date = Date(),
+        thumbnailURL: URL? = nil
+    ) {
         self.id = id
         self.url = url
         self.platform = platform
         self.sourceEngine = sourceEngine
         self.confidence = confidence
         self.discoveredAt = discoveredAt
+        self.thumbnailURL = thumbnailURL
     }
 
     func hash(into hasher: inout Hasher) { hasher.combine(url.absoluteString) }
