@@ -8,7 +8,7 @@ final class SearchViewModel: ObservableObject {
     @Published var isSearching = false
     @Published var completedCount = 0
 
-    let totalSites = SiteCatalog.all.count
+    var totalSites: Int { SiteCatalog.all.count }
     private let checker = UsernameChecker()
     private var task: Task<Void, Never>?
 

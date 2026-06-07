@@ -1,4 +1,5 @@
 import Foundation
+import RegexBuilder
 
 /// How a site signals that an account does NOT exist.
 enum DetectionMethod: String, Codable {
@@ -24,6 +25,8 @@ struct SiteTarget: Codable, Identifiable, Hashable {
     let detection: DetectionMethod
     /// Required when `detection == .message`.
     let errorMessage: String?
+    /// Optional regex pattern constraining valid usernames on this site.
+    let regexCheck: String?
 
     enum CodingKeys: String, CodingKey {
         case name, category
@@ -31,6 +34,7 @@ struct SiteTarget: Codable, Identifiable, Hashable {
         case probeTemplate = "probe_url"
         case detection
         case errorMessage = "error_message"
+        case regexCheck = "regex_check"
     }
 
     /// Validate a username against this site's allowed characters.
@@ -38,7 +42,14 @@ struct SiteTarget: Codable, Identifiable, Hashable {
     /// obviously invalid cases so we don't fire pointless requests.
     func isPlausible(username: String) -> Bool {
         guard !username.isEmpty else { return false }
-        return !username.contains(where: { $0.isWhitespace })
+        guard !username.contains(where: { $0.isWhitespace }) else { return false }
+        if let pattern = regexCheck {
+            guard let regex = try? NSRegularExpression(pattern: pattern),
+                  regex.firstMatch(in: username,
+                                   range: NSRange(username.startIndex..., in: username)) != nil
+            else { return false }
+        }
+        return true
     }
 
     func profileURL(for username: String) -> URL? {

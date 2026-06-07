@@ -21,25 +21,42 @@ struct SearchView: View {
     }
 
     private var searchBar: some View {
-        HStack {
-            Image(systemName: "at")
-                .foregroundStyle(.secondary)
-            TextField("username", text: $model.username)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .focused($fieldFocused)
-                .submitLabel(.search)
-                .onSubmit(runSearch)
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "at")
+                    .foregroundStyle(.secondary)
+                TextField("username", text: $model.username)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .focused($fieldFocused)
+                    .submitLabel(.search)
+                    .onSubmit(runSearch)
 
-            if model.isSearching {
-                Button("Stop", role: .destructive) { model.cancel() }
-            } else {
-                Button("Search", action: runSearch)
-                    .disabled(model.username.trimmingCharacters(in: .whitespaces).isEmpty)
+                if model.isSearching {
+                    Button("Stop", role: .destructive) { model.cancel() }
+                } else {
+                    Button("Search", action: runSearch)
+                        .disabled(model.username.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+            .padding()
+
+            if !model.isSearching && model.results.isEmpty {
+                catalogStatusLine
+                    .padding(.horizontal)
+                    .padding(.bottom, 6)
             }
         }
-        .padding()
         .background(.bar)
+    }
+
+    private var catalogStatusLine: some View {
+        let count = SiteCatalog.all.count
+        let source = SherlockCatalog.unsafeLoadedFromSherlock ? "Updated from Sherlock" : "Bundled"
+        return Text("\(count) sites · \(source)")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var progressHeader: some View {
