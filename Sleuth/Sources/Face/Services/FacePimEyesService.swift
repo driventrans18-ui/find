@@ -1,9 +1,6 @@
 import Foundation
 
 final class FacePimEyesService {
-    // PimEyes sits behind Cloudflare — the full browser engine is required.
-    // We use WKWebView to load their site, inject JS to submit the upload form,
-    // then scrape the rendered results page for social profile links.
     func search(imageData: Data) async throws -> [FaceSearchResult] {
         guard let pageURL = URL(string: "https://pimeyes.com/en") else { return [] }
         let html = (try? await submitImageFormWithBrowser(
@@ -16,29 +13,63 @@ final class FacePimEyesService {
     }
 
     private func parsePimEyesHTML(_ html: String) -> [FaceSearchResult] {
-        // PimEyes results page contains face match cards with site URLs and similarity scores.
-        // Pattern: data-url="https://..." or href="https://..." near a similarity percentage.
-        let urlPattern = try! NSRegularExpression(
-            pattern: #"(?:data-url|href)=["'](https?://[^"']+)["']"#,
-            options: .caseInsensitive
-        )
         let ns = html as NSString
-        let range = NSRange(location: 0, length: ns.length)
+        let fullRange = NSRange(location: 0, length: ns.length)
         var results: [FaceSearchResult] = []
         var seen = Set<String>()
 
-        urlPattern.matches(in: html, range: range).forEach { m in
+        // Collect all img srcs (face crop thumbnails from CDN)
+        let imgPattern = try! NSRegularExpression(
+            pattern: #"<img[^>]+src=["'](https?://[^"']+)["'][^>]*>"#,
+            options: .caseInsensitive
+        )
+        struct Pos { let loc: Int; let value: String }
+        var imgEntries: [Pos] = []
+        imgPattern.matches(in: html, range: fullRange).forEach { m in
+            guard m.numberOfRanges > 1 else { return }
+            let src = ns.substring(with: m.range(at: 1))
+            let low = src.lowercased()
+            guard low.hasSuffix(".jpg") || low.hasSuffix(".jpeg") ||
+                  low.hasSuffix(".png") || low.hasSuffix(".webp") ||
+                  low.contains("cdn") || low.contains("thumb") || low.contains("face") else { return }
+            imgEntries.append(Pos(loc: m.range.location, value: src))
+        }
+
+        // Collect all external source URLs (data-url, href, data-source)
+        let urlPattern = try! NSRegularExpression(
+            pattern: #"(?:data-url|data-source|href)=["'](https?://(?!pimeyes\.com)[^"']{10,})["']"#,
+            options: .caseInsensitive
+        )
+        urlPattern.matches(in: html, range: fullRange).forEach { m in
             guard m.numberOfRanges > 1 else { return }
             let urlStr = ns.substring(with: m.range(at: 1))
-            guard seen.insert(urlStr).inserted,
-                  let url = URL(string: urlStr),
-                  FaceURLExtractor.isSocial(url),
-                  let norm = FaceURLExtractor.normalize(url) else { return }
+            guard let url = URL(string: urlStr), seen.insert(urlStr).inserted else { return }
+
+            // Confidence from nearby "92%" similarity text
+            let searchStart = max(0, m.range.location - 600)
+            let searchLen   = min(1200, ns.length - searchStart)
+            let nearby = ns.substring(with: NSRange(location: searchStart, length: searchLen))
+            let confidence: Double
+            if let r = nearby.range(of: #"(\d{2,3})%"#, options: .regularExpression),
+               let val = Double(nearby[r].dropLast()) {
+                confidence = min(val / 100.0, 1.0)
+            } else {
+                confidence = 0.80
+            }
+
+            // Nearest face thumbnail within 2000 chars
+            let linkLoc = m.range.location
+            let thumbURL: URL? = imgEntries
+                .filter { abs($0.loc - linkLoc) < 2000 }
+                .min(by: { abs($0.loc - linkLoc) < abs($1.loc - linkLoc) })
+                .flatMap { URL(string: $0.value) }
+
             results.append(FaceSearchResult(
-                url: norm,
+                url: url,
                 platform: FacePlatform.from(host: url.host ?? ""),
                 sourceEngine: .pimEyes,
-                confidence: 0.8
+                confidence: confidence,
+                thumbnailURL: thumbURL
             ))
         }
         return results
@@ -48,6 +79,9 @@ final class FacePimEyesService {
 enum FacePimEyesError: LocalizedError {
     case uploadFailed, submitFailed
     var errorDescription: String? {
-        switch self { case .uploadFailed: return "PimEyes upload failed."; case .submitFailed: return "PimEyes search failed." }
+        switch self {
+        case .uploadFailed: return "PimEyes upload failed."
+        case .submitFailed: return "PimEyes search failed."
+        }
     }
 }
