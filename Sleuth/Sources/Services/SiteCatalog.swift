@@ -1,25 +1,20 @@
 import Foundation
 
-/// Loads the bundled site list from `sites.json`.
+/// Provides the current site list.
+///
+/// Sites are served from `SherlockCatalog.shared`, which may hold data fetched
+/// from the remote Sherlock database or fall back to the bundled sites.json.
 enum SiteCatalog {
-    static let all: [SiteTarget] = load()
+    static var all: [SiteTarget] {
+        // SherlockCatalog.shared.sites is populated by load() on app start.
+        // Actor-isolated access is safe here because we only read the value
+        // that was already set synchronously via SherlockCatalog.shared.load()
+        // before the first UI frame renders.  After a refresh() completes the
+        // search callers re-read this property, picking up the new list.
+        SherlockCatalog.unsafeSites
+    }
 
     static var categories: [String] {
         Array(Set(all.map(\.category))).sorted()
-    }
-
-    private static func load() -> [SiteTarget] {
-        guard let url = Bundle.main.url(forResource: "sites", withExtension: "json") else {
-            assertionFailure("sites.json missing from bundle")
-            return []
-        }
-        do {
-            let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode([SiteTarget].self, from: data)
-                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-        } catch {
-            assertionFailure("Failed to decode sites.json: \(error)")
-            return []
-        }
     }
 }
