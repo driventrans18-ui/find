@@ -111,12 +111,18 @@ private final class _WKHTMLFetcher: NSObject, WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         navigationCount += 1
         if waitForSecondNavigation && navigationCount == 1 {
-            // First load done — run the injection
+            // First load done — inject JS to submit the form
             onPageLoad?(webView)
+            // Many modern sites use AJAX/SPA navigation that never fires a second
+            // WKNavigation event. Schedule an unconditional extract after the full
+            // wait so we always get results even if no second navigation occurs.
+            DispatchQueue.main.asyncAfter(deadline: .now() + waitAfterLoad) { [weak self] in
+                self?.extract()
+            }
             return
         }
-        // Wait for JS rendering then extract
-        DispatchQueue.main.asyncAfter(deadline: .now() + waitAfterLoad) { [weak self] in
+        // Second (results) navigation finished — extract after brief JS render time
+        DispatchQueue.main.asyncAfter(deadline: .now() + min(waitAfterLoad, 2.0)) { [weak self] in
             self?.extract()
         }
     }

@@ -41,9 +41,12 @@ actor SherlockCatalog {
         }
     }
 
-    private static let remoteURL = URL(string:
-        "https://raw.githubusercontent.com/sherlock-project/sherlock/main/sherlock/resources/data.json"
-    )!
+    // Try multiple paths since Sherlock has restructured its repo layout
+    private static let remoteURLs: [URL] = [
+        URL(string: "https://raw.githubusercontent.com/sherlock-project/sherlock/main/sherlock/resources/data.json")!,
+        URL(string: "https://raw.githubusercontent.com/sherlock-project/sherlock/main/data/data.json")!,
+        URL(string: "https://raw.githubusercontent.com/sherlock-project/sherlock/master/sherlock/resources/data.json")!,
+    ]
 
     private static var cacheURL: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -70,19 +73,22 @@ actor SherlockCatalog {
     }
 
     /// Fetch latest Sherlock data.json from GitHub, parse and persist it.
-    /// Silently keeps existing data on any failure.
+    /// Tries multiple known URL paths. Silently keeps existing data on any failure.
     func refresh() async {
-        do {
-            let (data, response) = try await URLSession.shared.data(from: Self.remoteURL)
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return }
-            let parsed = try parseSherlock(data: data)
-            guard !parsed.isEmpty else { return }
-            let encoded = try JSONEncoder().encode(parsed)
-            try encoded.write(to: Self.cacheURL, options: .atomic)
-            sites = parsed
-            loadedFromSherlock = true
-        } catch {
-            // Network or parse failure — keep whatever is already loaded
+        for url in Self.remoteURLs {
+            do {
+                let (data, response) = try await URLSession.shared.data(from: url)
+                guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { continue }
+                let parsed = try parseSherlock(data: data)
+                guard !parsed.isEmpty else { continue }
+                let encoded = try JSONEncoder().encode(parsed)
+                try encoded.write(to: Self.cacheURL, options: .atomic)
+                sites = parsed
+                loadedFromSherlock = true
+                return
+            } catch {
+                continue
+            }
         }
     }
 
