@@ -10,8 +10,18 @@ final class FaceSearch4FacesService {
     ]
 
     func search(imageData: Data) async throws -> [FaceSearchResult] {
+        // Try WKWebView browser submission first (bypasses bot detection)
         for endpoint in endpoints {
-            let results = try await attemptSearch(imageData: imageData, endpoint: endpoint)
+            guard let pageURL = URL(string: endpoint) else { continue }
+            if let html = try? await submitImageFormWithBrowser(pageURL: pageURL, imageData: imageData, waitAfterSubmit: 7.0),
+               !html.isEmpty {
+                let results = parseResults(from: html)
+                if !results.isEmpty { return results }
+            }
+        }
+        // Fallback: plain URLSession upload
+        for endpoint in endpoints {
+            let results = (try? await attemptSearch(imageData: imageData, endpoint: endpoint)) ?? []
             if !results.isEmpty { return results }
         }
         return []

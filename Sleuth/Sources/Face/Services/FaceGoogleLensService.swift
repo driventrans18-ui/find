@@ -31,11 +31,10 @@ final class FaceGoogleLensService {
             return []
         }
 
-        var pageReq = URLRequest(url: resultsURL)
-        pageReq.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")
-        pageReq.setValue("https://lens.google.com/", forHTTPHeaderField: "Referer")
-        let (data, _) = try await session.data(for: pageReq)
-        guard let html = String(data: data, encoding: .utf8) else { return [] }
+        // Use WKWebView (full Safari engine) to load the results page —
+        // bypasses Cloudflare and JS challenges that block URLSession.
+        let html = (try? await fetchHTMLWithBrowser(url: resultsURL, waitAfterLoad: 4.0)) ?? ""
+        guard !html.isEmpty else { return [] }
 
         return FaceURLExtractor.extractAllURLs(from: html).map { url in
             let count = html.components(separatedBy: url.absoluteString).count - 1
