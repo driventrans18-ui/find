@@ -73,12 +73,31 @@ struct FaceURLExtractor {
             "cdnjs.cloudflare.com",
             "twimg.com",
             "fbcdn.net", "fbsbx.com",
-            "instagram.fbcdn.net"
+            "instagram.fbcdn.net",
+            "cookiebot.com", "onfastspring.com", "optimizely.com", "hotjar.com",
+            "intercom.io", "zendesk.com", "hubspot.com", "salesforce.com",
+            "marketo.com", "pardot.com", "eloqua.com", "drift.com",
+            "segment.io", "segment.com", "mixpanel.com", "amplitude.com",
+            "heap.io", "fullstory.com", "logrocket.com", "sentry.io",
+            "rollbar.com", "newrelic.com", "datadog.com", "pingdom.com",
+            "statuspage.io"
         ]
         if blockedDomains.contains(where: { h == $0 || h.hasSuffix(".\($0)") }) { return false }
 
         // Block deep CDN subdomains (more than 3 dots in host = likely cdn-123.something.net.example.com)
         if h.components(separatedBy: ".").count > 4 { return false }
+
+        // Block CDN-pattern .net domains: subdomain(s) containing digits before the TLD
+        if h.hasSuffix(".net") {
+            let parts = h.components(separatedBy: ".")
+            // If any subdomain label (not the SLD or TLD) is short and contains digits, treat as CDN
+            if parts.count >= 3 {
+                let subdomains = parts.dropLast(2)
+                if subdomains.contains(where: { $0.count <= 6 && $0.contains(where: { $0.isNumber }) }) {
+                    return false
+                }
+            }
+        }
 
         // Block static asset extensions
         let path = url.path.lowercased()
@@ -87,7 +106,7 @@ struct FaceURLExtractor {
                                   ".webp", ".mp4", ".mp3", ".pdf", ".zip", ".map"]
         if blockedExtensions.contains(where: { path.hasSuffix($0) }) { return false }
 
-        // Must have a path that looks like a profile (not just a root domain)
-        return path.count > 1
+        // Must have a meaningful path (more than just "/" or "/a")
+        return path.count > 2
     }
 }

@@ -1,25 +1,13 @@
 import Foundation
 
 final class TelegramSearchService {
-    private let session: URLSession = {
-        let cfg = URLSessionConfiguration.ephemeral
-        cfg.timeoutIntervalForRequest  = 15
-        cfg.timeoutIntervalForResource = 20
-        cfg.httpAdditionalHeaders = [
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
-            "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9",
-        ]
-        return URLSession(configuration: cfg)
-    }()
-
-    // Searches tgstat.ru for channels/groups matching the keyword.
-    // Falls back to tgstat.com (English mirror) if the first request fails.
+    // Searches tgstat.com for channels/groups matching the keyword (English results).
+    // Falls back to tgstat.ru if the first request fails or returns no results.
     func search(query: String) async throws -> [TelegramSearchResult] {
         let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         let urls = [
-            "https://tgstat.com/en/search?q=\(encoded)&type=channel",
-            "https://tgstat.ru/en/search?q=\(encoded)&type=channel",
+            "https://tgstat.com/en/search?q=\(encoded)&type=channel&lang=en",
+            "https://tgstat.ru/en/search?q=\(encoded)&type=channel&lang=en",
         ]
         for urlString in urls {
             guard let url = URL(string: urlString) else { continue }
@@ -31,10 +19,7 @@ final class TelegramSearchService {
     }
 
     private func fetchResults(from url: URL) async throws -> [TelegramSearchResult] {
-        let (data, _) = try await session.data(from: url)
-        guard let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
-            return []
-        }
+        let html = try await fetchHTMLWithBrowser(url: url, waitAfterLoad: 3.0)
         return parse(html: html, baseURL: url)
     }
 
