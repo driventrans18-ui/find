@@ -157,11 +157,19 @@ struct FaceSearchView: View {
 
     @ViewBuilder
     private var resultsList: some View {
-        if vm.displayedResults.isEmpty {
-            ContentUnavailableView(
-                vm.session?.status == .searching ? "Searching…" : "No results found",
-                systemImage: vm.session?.status == .searching ? "magnifyingglass" : "xmark.circle"
-            )
+        if vm.session?.status == .searching {
+            ContentUnavailableView("Searching…", systemImage: "magnifyingglass")
+        } else if vm.displayedResults.isEmpty {
+            VStack(spacing: 20) {
+                ContentUnavailableView(
+                    "No scraped results",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text("The search engines may have blocked automated access. Open them directly in your browser below.")
+                )
+                if let data = vm.session?.faceImageData {
+                    BrowserFallbackButtons(imageData: data)
+                }
+            }
         } else {
             List(vm.displayedResults) { result in
                 FaceResultRow(result: result)
@@ -243,5 +251,41 @@ struct FaceCameraPickerView: UIViewControllerRepresentable {
             if let img = info[.originalImage] as? UIImage { parent.onImage(img) }
         }
         func imagePickerControllerDidCancel(_ p: UIImagePickerController) { parent.onCancel() }
+    }
+}
+
+struct BrowserFallbackButtons: View {
+    let imageData: Data
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("OPEN IN BROWSER")
+                .font(.caption2).fontWeight(.semibold).foregroundStyle(.secondary)
+
+            Link(destination: URL(string: "https://lens.google.com")!) {
+                Label("Google Lens", systemImage: "magnifyingglass.circle.fill")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.blue.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+
+            Link(destination: URL(string: "https://yandex.com/images")!) {
+                Label("Yandex Images", systemImage: "photo.on.rectangle")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.orange.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+
+            Link(destination: URL(string: "https://pimeyes.com")!) {
+                Label("PimEyes", systemImage: "eye.fill")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.purple.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
+        .padding(.horizontal)
     }
 }
