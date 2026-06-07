@@ -11,6 +11,9 @@ struct RootView: View {
             FaceSearchView()
                 .tabItem { Label("Face", systemImage: "face.smiling") }
 
+            TelegramSearchView()
+                .tabItem { Label("Telegram", systemImage: "paperplane.fill") }
+
             HistoryView()
                 .tabItem { Label("History", systemImage: "clock") }
 
