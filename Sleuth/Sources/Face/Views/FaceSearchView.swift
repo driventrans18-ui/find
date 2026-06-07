@@ -303,7 +303,7 @@ struct FaceSearchView: View {
             VStack(spacing: 8) {
                 Image(systemName: "exclamationmark.shield").font(.largeTitle).foregroundStyle(.gray)
                 Text("No results scraped").font(.headline).foregroundStyle(.white)
-                Text("Search engines blocked automated access.\nOpen them in your browser to see results.")
+                Text("Search engines blocked automated access.\nSearch manually using the buttons below.")
                     .font(.caption).foregroundStyle(.gray).multilineTextAlignment(.center)
             }
             VStack(spacing: 10) {
@@ -317,7 +317,18 @@ struct FaceSearchView: View {
     }
 
     private func browserLink(_ title: String, url: String, color: Color) -> some View {
-        Link(destination: URL(string: url)!) {
+        BrowserLinkButton(title: title, url: URL(string: url)!, color: color)
+    }
+}
+
+private struct BrowserLinkButton: View {
+    let title: String
+    let url: URL
+    let color: Color
+    @State private var browserURL: URL? = nil
+
+    var body: some View {
+        Button { browserURL = url } label: {
             HStack {
                 Circle().fill(color.opacity(0.2)).frame(width: 8, height: 8)
                 Text(title).font(.subheadline).foregroundStyle(.white)
@@ -328,6 +339,7 @@ struct FaceSearchView: View {
             .background(color.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
+        .sheet(item: $browserURL) { u in InAppBrowser(url: u) }
     }
 }
 

@@ -2,9 +2,10 @@ import SwiftUI
 
 struct FaceResultCard: View {
     let result: FaceSearchResult
+    @State private var browserURL: URL? = nil
 
     var body: some View {
-        Button { UIApplication.shared.open(result.url) } label: {
+        Button { browserURL = result.url } label: {
             HStack(spacing: 14) {
                 thumbnail
                 VStack(alignment: .leading, spacing: 5) {
@@ -26,6 +27,7 @@ struct FaceResultCard: View {
             .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.07), lineWidth: 1))
         }
         .buttonStyle(.plain)
+        .sheet(item: $browserURL) { url in InAppBrowser(url: url) }
     }
 
     @ViewBuilder
