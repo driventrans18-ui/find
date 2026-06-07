@@ -86,7 +86,13 @@ actor UsernameChecker {
     private func evaluate(site: SiteTarget, http: HTTPURLResponse, body: Data) -> SearchResult.Status {
         switch site.detection {
         case .statusCode:
-            return (200..<300).contains(http.statusCode) ? .found : .notFound
+            guard (200..<300).contains(http.statusCode) else { return .notFound }
+            // If the server redirected us to its homepage the final URL path will
+            // be "/" — treat that as not found (false-positive suppression).
+            if let finalPath = http.url?.path, finalPath == "/" || finalPath.isEmpty {
+                return .notFound
+            }
+            return .found
         case .message:
             guard let marker = site.errorMessage else {
                 return (200..<300).contains(http.statusCode) ? .found : .notFound

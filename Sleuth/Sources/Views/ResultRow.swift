@@ -21,9 +21,17 @@ struct ResultRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(result.site.name)
                     .font(.headline)
-                Text(result.site.category)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if let url = result.profileURL {
+                    Text(url.absoluteString)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                } else {
+                    Text(result.site.category)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
             Image(systemName: "arrow.up.right.square")

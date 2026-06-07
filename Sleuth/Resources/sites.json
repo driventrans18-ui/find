@@ -15,13 +15,15 @@
     "name": "AllMyLinks",
     "category": "Other",
     "url": "https://allmylinks.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Anchor",
     "category": "Other",
     "url": "https://anchor.fm/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "AngelList",
@@ -51,13 +53,15 @@
     "name": "Audiomack",
     "category": "Music",
     "url": "https://audiomack.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Badoo",
     "category": "Social",
     "url": "https://badoo.com/en/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "This profile does not exist"
   },
   {
     "name": "Bandcamp",
@@ -69,7 +73,8 @@
     "name": "BeatPort",
     "category": "Music",
     "url": "https://www.beatport.com/artist/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Behance",
@@ -87,7 +92,8 @@
     "name": "Bilibili",
     "category": "Video",
     "url": "https://space.bilibili.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Bitbucket",
@@ -111,7 +117,8 @@
     "name": "Bluesky",
     "category": "Social",
     "url": "https://bsky.app/profile/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Bongacams",
@@ -123,7 +130,8 @@
     "name": "BuyMeACoffee",
     "category": "Other",
     "url": "https://www.buymeacoffee.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Caffeine",
@@ -141,7 +149,8 @@
     "name": "Carrd",
     "category": "Other",
     "url": "https://{}.carrd.co",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "This site can't be reached"
   },
   {
     "name": "Chaturbate",
@@ -203,7 +212,8 @@
     "name": "Deezer",
     "category": "Music",
     "url": "https://www.deezer.com/en/profile/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Dev.to",
@@ -222,7 +232,8 @@
     "name": "Discogs",
     "category": "Music",
     "url": "https://www.discogs.com/user/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Disqus",
@@ -254,13 +265,15 @@
     "name": "Ello",
     "category": "Social",
     "url": "https://ello.co/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Sorry, that page isn't here"
   },
   {
     "name": "Etsy",
     "category": "Other",
     "url": "https://www.etsy.com/shop/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Sorry, this page isn't available"
   },
   {
     "name": "Exercism",
@@ -304,7 +317,8 @@
     "name": "Flipboard",
     "category": "Other",
     "url": "https://flipboard.com/@{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Hmm, this page doesn't exist"
   },
   {
     "name": "Foursquare",
@@ -328,7 +342,8 @@
     "name": "Gab",
     "category": "Social",
     "url": "https://gab.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "GameJolt",
@@ -340,7 +355,8 @@
     "name": "Giphy",
     "category": "Other",
     "url": "https://giphy.com/channel/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "GitHub",
@@ -360,7 +376,8 @@
     "name": "GoodReads",
     "category": "Other",
     "url": "https://www.goodreads.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Page not found"
   },
   {
     "name": "Gravatar",
@@ -411,7 +428,8 @@
     "name": "Hive",
     "category": "Social",
     "url": "https://peakd.com/@{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "HuggingFace",
@@ -467,13 +485,15 @@
     "name": "Kick",
     "category": "Video",
     "url": "https://kick.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Ko-fi",
     "category": "Other",
     "url": "https://ko-fi.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Kongregate",
@@ -504,7 +524,8 @@
     "name": "Letterboxd",
     "category": "Other",
     "url": "https://letterboxd.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "This page could not be found"
   },
   {
     "name": "Lichess",
@@ -562,7 +583,8 @@
     "name": "Mastodon",
     "category": "Social",
     "url": "https://mastodon.social/@{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Medium",
@@ -575,13 +597,15 @@
     "name": "MeWe",
     "category": "Social",
     "url": "https://mewe.com/i/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Minds",
     "category": "Social",
     "url": "https://www.minds.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Minecraft",
@@ -593,13 +617,15 @@
     "name": "Mix",
     "category": "Other",
     "url": "https://mix.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Mixcloud",
     "category": "Music",
     "url": "https://www.mixcloud.com/{}/",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Muck Rack",
@@ -641,7 +667,8 @@
     "name": "Odysee",
     "category": "Video",
     "url": "https://odysee.com/@{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "This channel is not yet created"
   },
   {
     "name": "OK.ru",
@@ -671,7 +698,8 @@
     "name": "Pandora",
     "category": "Music",
     "url": "https://www.pandora.com/artist/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Pastebin",
@@ -708,7 +736,8 @@
     "name": "Plurk",
     "category": "Social",
     "url": "https://www.plurk.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "not found"
   },
   {
     "name": "ProductHunt",
@@ -758,7 +787,8 @@
     "name": "Resident Advisor",
     "category": "Music",
     "url": "https://www.residentadvisor.net/dj/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "ReverbNation",
@@ -778,7 +808,8 @@
     "name": "Rumble",
     "category": "Social",
     "url": "https://rumble.com/c/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Channel Not Found"
   },
   {
     "name": "Scratch",
@@ -790,7 +821,8 @@
     "name": "Smashwords",
     "category": "Blog",
     "url": "https://www.smashwords.com/profile/view/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Page not found"
   },
   {
     "name": "SmugMug",
@@ -858,13 +890,15 @@
     "name": "SteemIt",
     "category": "Social",
     "url": "https://steemit.com/@{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Strava",
     "category": "Other",
     "url": "https://www.strava.com/athletes/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "not found"
   },
   {
     "name": "Stripchat",
@@ -876,7 +910,8 @@
     "name": "Substack",
     "category": "Blog",
     "url": "https://{}.substack.com",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Telegram",
@@ -895,7 +930,8 @@
     "name": "Tidal",
     "category": "Music",
     "url": "https://tidal.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "TikTok",
@@ -919,7 +955,8 @@
     "name": "Trello",
     "category": "Other",
     "url": "https://trello.com/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Tripadvisor",
@@ -931,7 +968,8 @@
     "name": "Trovo",
     "category": "Video",
     "url": "https://trovo.live/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Tumblr",
@@ -963,7 +1001,8 @@
     "name": "Untappd",
     "category": "Other",
     "url": "https://untappd.com/user/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Upwork",
@@ -975,7 +1014,8 @@
     "name": "Vero",
     "category": "Social",
     "url": "https://vero.co/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "page not found"
   },
   {
     "name": "Vimeo",
@@ -999,7 +1039,8 @@
     "name": "Wattpad",
     "category": "Blog",
     "url": "https://www.wattpad.com/user/{}",
-    "detection": "status_code"
+    "detection": "message",
+    "error_message": "Page not found"
   },
   {
     "name": "Weibo",
