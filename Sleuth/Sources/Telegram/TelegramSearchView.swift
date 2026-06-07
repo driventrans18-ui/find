@@ -25,7 +25,7 @@ final class TelegramSearchViewModel: ObservableObject {
                 let r = try await service.search(query: q)
                 if !Task.isCancelled {
                     results = r
-                    if r.isEmpty { errorMessage = "No channels or groups found for "\(q)"." }
+                    if r.isEmpty { errorMessage = "No channels or groups found for \"\(q)\"." }
                 }
             } catch {
                 if !Task.isCancelled { errorMessage = "Search failed: \(error.localizedDescription)" }
@@ -178,7 +178,7 @@ struct TelegramResultRow: View {
             .overlay {
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 18))
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
             }
     }
 
