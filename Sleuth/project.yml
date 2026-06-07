@@ -29,6 +29,8 @@ targets:
           - UIInterfaceOrientationPortrait
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        NSCameraUsageDescription: "Sleuth needs camera access to capture photos for reverse face search."
+        NSPhotoLibraryUsageDescription: "Sleuth needs photo library access to select images for reverse face search."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.sleuth
