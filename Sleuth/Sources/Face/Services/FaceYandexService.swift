@@ -24,7 +24,7 @@ final class FaceYandexService {
         let (pageData, _) = try await session.data(for: pageReq)
         guard let html = String(data: pageData, encoding: .utf8) else { return [] }
 
-        return FaceURLExtractor.extractSocialURLs(from: html).map { url in
+        return FaceURLExtractor.extractAllURLs(from: html).map { url in
             let count = html.components(separatedBy: url.absoluteString).count - 1
             return FaceSearchResult(url: url, platform: FacePlatform.from(host: url.host ?? ""),
                                     sourceEngine: .yandex, confidence: min(0.9, 0.45 + Double(count) * 0.1))
