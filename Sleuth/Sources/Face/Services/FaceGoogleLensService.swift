@@ -1,26 +1,35 @@
 import Foundation
 
 final class FaceGoogleLensService {
+    // Delegate captures the redirect URL instead of following it automatically
+    private let delegate = NoRedirectDelegate()
+    private lazy var noRedirectSession = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
     private let session = faceURLSession()
 
     func search(imageData: Data) async throws -> [FaceSearchResult] {
         let boundary = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-
-        // Use a non-redirecting session to capture the Location header manually
-        let noRedirectSession = URLSession(configuration: .default, delegate: NoRedirectDelegate(), delegateQueue: nil)
 
         var req = URLRequest(url: URL(string: "https://lens.google.com/upload")!)
         req.httpMethod = "POST"
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         req.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")
         req.setValue("https://lens.google.com/", forHTTPHeaderField: "Referer")
+        req.setValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
         req.httpBody = faceMultipartBody(imageData: imageData, field: "encoded_image", fileName: "face.jpg", boundary: boundary)
 
+        // Upload — the delegate stops the redirect so response.url is the Location target
         let (_, uploadResponse) = try await noRedirectSession.data(for: req)
 
-        guard let http = uploadResponse as? HTTPURLResponse,
-              let location = http.allHeaderFields["Location"] as? String,
-              let resultsURL = URL(string: location) else { return [] }
+        let resultsURL: URL
+        if let http = uploadResponse as? HTTPURLResponse,
+           let loc = http.allHeaderFields["Location"] as? String,
+           let u = URL(string: loc) {
+            resultsURL = u
+        } else if let u = uploadResponse.url, !u.absoluteString.contains("/upload") {
+            resultsURL = u
+        } else {
+            return []
+        }
 
         var pageReq = URLRequest(url: resultsURL)
         pageReq.setValue(faceUserAgent, forHTTPHeaderField: "User-Agent")

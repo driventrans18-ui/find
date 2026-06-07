@@ -27,14 +27,16 @@ final class FaceSearchViewModel: ObservableObject {
         isProcessing = true; errorMessage = nil
         Task {
             do {
-                let faces = try await FaceImageProcessor.detectAllFaces(from: image)
+                // Normalize orientation first so Vision boxes align with what's displayed
+                let normalized = FaceImageProcessor.normalizeOrientation(image)
+                let faces = try await FaceImageProcessor.detectAllFaces(from: normalized)
                 if faces.isEmpty {
                     errorMessage = "No face detected in the selected photo."
                     isProcessing = false
                 } else if faces.count == 1 {
                     await searchWithFace(faces[0])
                 } else {
-                    originalImage = image; detectedFaces = faces
+                    originalImage = normalized; detectedFaces = faces
                     showFaceSelector = true; isProcessing = false
                 }
             } catch {

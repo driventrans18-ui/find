@@ -22,10 +22,20 @@ struct FaceImageProcessor {
     private static let maxBytes = 1_048_576
     private static let padding = 0.15
 
+    // Redraw the image so CGImage pixels are always in the .up orientation.
+    // iPhone camera photos carry EXIF rotation in imageOrientation; CGImage
+    // ignores that, so Vision would see a rotated image and return wrong boxes.
+    static func normalizeOrientation(_ image: UIImage) -> UIImage {
+        guard image.imageOrientation != .up else { return image }
+        let renderer = UIGraphicsImageRenderer(size: image.size)
+        return renderer.image { _ in image.draw(at: .zero) }
+    }
+
     // MARK: - Detect all faces, sorted largest first
 
     static func detectAllFaces(from image: UIImage) async throws -> [DetectedFace] {
-        guard let cgImage = image.cgImage else { throw FaceImageProcessorError.cropFailed }
+        let normalized = normalizeOrientation(image)
+        guard let cgImage = normalized.cgImage else { throw FaceImageProcessorError.cropFailed }
         return try await withCheckedThrowingContinuation { continuation in
             let request = VNDetectFaceRectanglesRequest { req, err in
                 if let err { continuation.resume(throwing: err); return }
@@ -92,8 +102,13 @@ struct FaceImageProcessor {
 
     private static func crop(_ cg: CGImage, box: CGRect) -> UIImage? {
         let pw = CGFloat(cg.width), ph = CGFloat(cg.height)
-        // Vision box origin is bottom-left; UIKit/CGImage origin is top-left
-        let rect = CGRect(x: box.minX * pw, y: (1 - box.maxY) * ph, width: box.width * pw, height: box.height * ph)
-        return cg.cropping(to: rect).map { UIImage(cgImage: $0) }
+        // Vision box origin is bottom-left; CGImage origin is top-left
+        let rect = CGRect(x: box.minX * pw, y: (1 - box.maxY) * ph,
+                          width: box.width * pw, height: box.height * ph)
+        guard let cropped = cg.cropping(to: rect) else { return nil }
+        // Render into a new UIImage so it always has .up orientation
+        let size = CGSize(width: cropped.width, height: cropped.height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in UIImage(cgImage: cropped).draw(in: CGRect(origin: .zero, size: size)) }
     }
 }
