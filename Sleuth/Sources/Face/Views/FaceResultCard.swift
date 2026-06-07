@@ -36,7 +36,7 @@ struct FaceResultCard: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(result.platform.displayName)
                             .font(.subheadline).fontWeight(.semibold).foregroundStyle(.white)
-                        Text(result.url.host ?? result.url.absoluteString)
+                        Text(result.url.absoluteString)
                             .font(.caption2).foregroundStyle(.gray).lineLimit(1)
                     }
                     Spacer()
@@ -58,21 +58,34 @@ struct FaceResultCard: View {
         .sheet(item: $browserURL) { url in InAppBrowser(url: url) }
     }
 
-    // Shown when no thumbnail — compact horizontal layout
+    // Shown when no thumbnail — compact horizontal layout with favicon fallback
     private var fallbackHeader: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white.opacity(0.06))
-                    .frame(width: 52, height: 52)
-                Image(systemName: result.platform.sfSymbol)
-                    .font(.system(size: 20))
-                    .foregroundStyle(.white.opacity(0.6))
+        let domain = result.url.host ?? ""
+        let faviconURL = URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=128")
+        return HStack(spacing: 12) {
+            AsyncImage(url: faviconURL) { phase in
+                switch phase {
+                case .success(let img):
+                    img.resizable()
+                        .scaledToFill()
+                        .frame(width: 52, height: 52)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                default:
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.white.opacity(0.06))
+                            .frame(width: 52, height: 52)
+                        Image(systemName: result.platform.sfSymbol)
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
             }
+            .frame(width: 52, height: 52)
             VStack(alignment: .leading, spacing: 3) {
                 Text(result.platform.displayName)
                     .font(.subheadline).fontWeight(.semibold).foregroundStyle(.white)
-                Text(result.url.host ?? result.url.absoluteString)
+                Text(result.url.absoluteString)
                     .font(.caption2).foregroundStyle(.gray).lineLimit(1)
             }
             Spacer()
